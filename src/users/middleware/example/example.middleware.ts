@@ -13,12 +13,6 @@ export class ExampleMiddleware implements NestMiddleware {
 
     if (!authorization)
       throw new HttpException('No Aithorization token', HttpStatus.BAD_REQUEST);
-
-    if (authorization === 'loken') next();
-    else
-      throw new HttpException(
-        'Invalid Aithorization token',
-        HttpStatus.FORBIDDEN,
-      );
+    else next();
   }
 }

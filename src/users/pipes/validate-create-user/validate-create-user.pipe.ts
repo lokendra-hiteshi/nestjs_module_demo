@@ -17,7 +17,6 @@ export class ValidateCreateUserPipe implements PipeTransform {
     const parseAgeToNumber = parseInt(value.age.toString());
 
     if (isNaN(parseAgeToNumber)) {
-      console.log('Checking age');
       throw new BadRequestException('Age should be number');
     }
     return value;
