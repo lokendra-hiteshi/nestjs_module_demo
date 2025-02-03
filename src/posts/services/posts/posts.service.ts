@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { CreatePostDto } from 'src/posts/dtos/CreatePost.dto';
 import { Posts } from 'src/posts/models/posts.model';
 import { Users } from 'src/users/models/users.model';
-import { CreatePostType } from 'src/utils/types';
 
 @Injectable()
 export class PostsService {
@@ -13,13 +13,14 @@ export class PostsService {
     private usersModel: typeof Users,
   ) {}
 
-  async createPost(postData: CreatePostType): Promise<Posts> {
-    console.log('PostData in services', postData);
+  async createPost(postData: CreatePostDto): Promise<Posts> {
     return this.postsModel.create(postData);
   }
 
   async findAll() {
-    return this.postsModel.findAll();
+    return this.postsModel.findAll({
+      order: [['createdAt', 'DESC']],
+    });
   }
 
   async findByUserId(userId: number) {
@@ -33,6 +34,7 @@ export class PostsService {
       where: {
         userId: userId,
       },
+      order: [['createdAt', 'DESC']],
     });
   }
 }

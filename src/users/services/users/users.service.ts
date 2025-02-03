@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { CreateUserDto } from 'src/users/dtos/CreateUser.dto';
 import { Users } from 'src/users/models/users.model';
-import { CreateUserType } from 'src/utils/types';
 
 @Injectable()
 export class UsersService {
@@ -11,10 +11,12 @@ export class UsersService {
   ) {}
 
   fetchUsers() {
-    return this.usersModel.findAll();
+    return this.usersModel.findAll({
+      order: [['createdAt', 'DESC']],
+    });
   }
 
-  async createUser(userDetails: CreateUserType): Promise<Users> {
+  async createUser(userDetails: CreateUserDto) {
     return this.usersModel.create(userDetails);
   }
 

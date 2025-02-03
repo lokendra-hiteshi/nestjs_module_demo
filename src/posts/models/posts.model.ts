@@ -10,7 +10,7 @@ import {
 import { Users } from 'src/users/models/users.model';
 
 @Table
-export class Posts extends Model<Posts> {
+export class Posts extends Model<Posts, Partial<Posts>> {
   @PrimaryKey
   @Column({
     type: DataType.INTEGER,

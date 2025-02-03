@@ -11,8 +11,15 @@ export class ExampleMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     const { authorization } = req.headers;
 
-    if (!authorization)
+    const token = authorization?.split(' ')[1];
+
+    if (!token)
       throw new HttpException('No Aithorization token', HttpStatus.BAD_REQUEST);
-    else next();
+    else if (token === 'loken') next();
+    else
+      throw new HttpException(
+        'Invalid token: Unauthorized user',
+        HttpStatus.BAD_REQUEST,
+      );
   }
 }

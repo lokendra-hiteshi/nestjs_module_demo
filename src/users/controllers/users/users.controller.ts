@@ -11,32 +11,61 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { CreateUserDto } from 'src/users/dtos/CreateUser.dto';
 import { AuthGuardGuard } from 'src/users/guards/auth-guard.guard';
 import { ValidateCreateUserPipe } from 'src/users/pipes/validate-create-user/validate-create-user.pipe';
 import { UsersService } from 'src/users/services/users/users.service';
-import { CreateUserType } from 'src/utils/types';
 @Controller('users')
 export class UsersController {
   constructor(private userService: UsersService) {}
 
   @Get()
   @UseGuards(AuthGuardGuard)
-  getUsers() {
-    return this.userService.fetchUsers();
+  async getUsers() {
+    try {
+      const users = await this.userService.fetchUsers();
+      return {
+        message: 'Users fetched successfully.',
+        users,
+      };
+    } catch (err) {
+      return {
+        message: `Error in fetching users: ${err}`,
+      };
+    }
   }
 
-  @Post()
+  @Post('create')
   @UsePipes(new ValidationPipe())
-  createUser(@Body(ValidateCreateUserPipe) userData: CreateUserType) {
-    return this.userService.createUser(userData);
+  async createUser(@Body(ValidateCreateUserPipe) userData: CreateUserDto) {
+    try {
+      const user = await this.userService.createUser(userData);
+      return {
+        message: 'New User created successfully.',
+        user,
+      };
+    } catch (err) {
+      return {
+        message: `Error in creating user: ${err}`,
+      };
+    }
   }
 
   @Get(':id')
   async getUserById(@Param('id', ParseIntPipe) id: number) {
-    const user = await this.userService.fetchUserById(id);
-    if (!user) {
-      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    try {
+      const user = await this.userService.fetchUserById(id);
+      if (!user) {
+        throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+      }
+      return {
+        message: 'User fertched successfully.',
+        user,
+      };
+    } catch (err) {
+      return {
+        message: `Error in fetching user: ${err}`,
+      };
     }
-    return user;
   }
 }

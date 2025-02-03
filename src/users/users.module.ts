@@ -7,7 +7,6 @@ import {
 import { UsersController } from './controllers/users/users.controller';
 import { UsersService } from './services/users/users.service';
 import { ExampleMiddleware } from './middleware/example/example.middleware';
-import { AnotherMiddleware } from './middleware/another/another.middleware';
 import { Users } from './models/users.model';
 import { SequelizeModule } from '@nestjs/sequelize';
 
@@ -18,16 +17,9 @@ import { SequelizeModule } from '@nestjs/sequelize';
 })
 export class UsersModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(ExampleMiddleware)
-      .forRoutes({
-        path: 'users',
-        method: RequestMethod.GET,
-      })
-      .apply(AnotherMiddleware)
-      .forRoutes({
-        path: 'users',
-        method: RequestMethod.GET,
-      });
+    consumer.apply(ExampleMiddleware).forRoutes({
+      path: 'users',
+      method: RequestMethod.GET,
+    });
   }
 }

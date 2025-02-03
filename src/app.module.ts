@@ -3,6 +3,8 @@ import { UsersModule } from './users/users.module';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { databaseConfig } from './config/db.config';
 import { PostsModule } from './posts/posts.module';
+import { ControllersController } from './auth/controllers/controllers.controller';
+import { ServicesService } from './auth/services/services.service';
 
 @Module({
   imports: [
@@ -20,7 +22,7 @@ import { PostsModule } from './posts/posts.module';
     UsersModule,
     PostsModule,
   ],
-  controllers: [],
-  providers: [],
+  controllers: [ControllersController],
+  providers: [ServicesService],
 })
 export class AppModule {}
