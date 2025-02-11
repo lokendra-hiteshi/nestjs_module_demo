@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { CreateUserDto } from 'src/users/dtos/CreateUser.dto';
+import { where } from 'sequelize';
 import { Users } from 'src/users/models/users.model';
 
 @Injectable()
@@ -10,14 +10,18 @@ export class UsersService {
     private usersModel: typeof Users,
   ) {}
 
-  fetchUsers() {
-    return this.usersModel.findAll({
+  async fetchUsers() {
+    return await this.usersModel.findAll({
       order: [['createdAt', 'DESC']],
     });
   }
 
-  async createUser(userDetails: CreateUserDto) {
-    return this.usersModel.create(userDetails);
+  async fetchUserByEmail(email: string) {
+    return await this.usersModel.findOne({
+      where: {
+        email,
+      },
+    });
   }
 
   async fetchUserById(id: number) {
