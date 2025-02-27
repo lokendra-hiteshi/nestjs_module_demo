@@ -1,60 +1,49 @@
 import {
-  Body,
   Controller,
   Get,
   HttpException,
   HttpStatus,
   Param,
   ParseIntPipe,
-  Post,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
-import { CreateUserDto } from 'src/users/dtos/CreateUser.dto';
 import { AuthGuardGuard } from 'src/users/guards/auth-guard.guard';
-import { ValidateCreateUserPipe } from 'src/users/pipes/validate-create-user/validate-create-user.pipe';
 import { UsersService } from 'src/users/services/users/users.service';
-
 @Controller('users')
 export class UsersController {
   constructor(private userService: UsersService) {}
 
   @Get()
   @UseGuards(AuthGuardGuard)
-  getUsers() {
-    return this.userService.fetchUsers();
-  }
-
-  @Get('posts')
-  getUsersPost() {
-    return [
-      {
-        username: 'Lokendra',
-        email: 'loken7213@gmail.com',
-        post: [
-          {
-            id: 1,
-            title: 'Post 1',
-          },
-        ],
-      },
-    ];
-  }
-
-  @Post()
-  @UsePipes(new ValidationPipe())
-  createUser(@Body(ValidateCreateUserPipe) userData: CreateUserDto) {
-    return this.userService.createUser(userData);
+  async getUsers() {
+    try {
+      const users = await this.userService.fetchUsers();
+      return {
+        message: 'Users fetched successfully.',
+        users,
+      };
+    } catch (err) {
+      return {
+        message: `Error in fetching users: ${err}`,
+      };
+    }
   }
 
   @Get(':id')
-  getUserById(@Param('id', ParseIntPipe) id: number) {
-    console.log(id);
-    const user = this.userService.fetchUserById(id);
-    if (!user) {
-      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+  async getUserById(@Param('id', ParseIntPipe) id: number) {
+    try {
+      const user = await this.userService.fetchUserById(id);
+      if (!user) {
+        throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+      }
+      return {
+        message: 'User fertched successfully.',
+        user,
+      };
+    } catch (err) {
+      return {
+        message: `Error in fetching user: ${err}`,
+      };
     }
-    return user;
   }
 }

@@ -1,22 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserType } from 'src/utils/types';
+import { InjectModel } from '@nestjs/sequelize';
+import { where } from 'sequelize';
+import { Users } from 'src/users/models/users.model';
 
 @Injectable()
 export class UsersService {
-  private fakeUsers = [
-    { email: 'loken7213@gmail.com', username: 'Lokendra' },
-    { email: 'loken7213@gmail.com', username: 'Lokendra' },
-  ];
-  fetchUsers() {
-    return this.fakeUsers;
+  constructor(
+    @InjectModel(Users)
+    private usersModel: typeof Users,
+  ) {}
+
+  async fetchUsers() {
+    return await this.usersModel.findAll({
+      order: [['createdAt', 'DESC']],
+    });
   }
 
-  createUser(userDetails: CreateUserType) {
-    this.fakeUsers.push(userDetails);
-    return;
+  async fetchUserByEmail(email: string) {
+    return await this.usersModel.findOne({
+      where: {
+        email,
+      },
+    });
   }
 
-  fetchUserById(id: number) {
-    return { id, username: 'Lokendra', email: 'loken@gmail.com' };
+  async fetchUserById(id: number) {
+    return await this.usersModel.findByPk(id);
   }
 }
